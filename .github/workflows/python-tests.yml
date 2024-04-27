@@ -30,6 +30,7 @@ jobs:
         sudo apt-get install apt-transport-https
         echo "deb [signed-by=/usr/share/keyrings/elasticsearch-keyring.gpg] https://artifacts.elastic.co/packages/8.x/apt stable main" | sudo tee /etc/apt/sources.list.d/elastic-8.x.list
         sudo apt-get update && sudo apt-get install elasticsearch
+        sudo sed -i 's/xpack.security.enabled: true/xpack.security.enabled: false/' /etc/elasticsearch/elasticsearch.yml
         sudo systemctl restart elasticsearch
         sudo systemctl --no-pager status elasticsearch
     - name: Install Python dependencies
@@ -52,16 +53,6 @@ jobs:
       run: |
         sudo apt-get install -y python3-pip python3-virtualenv python3-dev libxml2-dev libxslt-dev -y
         pip install parsedmarc
-        # Elasticsearchのステータスをチェックし、必要に応じて待機
-        until curl -s http://localhost:9200/_cluster/health?wait_for_status=yellow&timeout=50s > /dev/null; do
-          echo "Elasticsearchが準備完了するのを待っています..."
-          sleep 10
-        done
-        sudo systemctl restart elasticsearch
-        until curl -s http://localhost:9200/_cluster/health?wait_for_status=yellow&timeout=50s > /dev/null; do
-          echo "再起動後のElasticsearchが準備完了するのを待っています..."
-          sleep 10
-        done
         parsedmarc --debug -c ci.ini samples/aggregate/*
         parsedmarc --debug -c ci.ini samples/forensic/*
     - name: Test building packages
