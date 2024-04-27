@@ -50,6 +50,8 @@ jobs:
     - name: Test sample DMARC reports
       continue-on-error: true
       run: |
+        sudo apt-get install -y python3-pip python3-virtualenv python3-dev libxml2-dev libxslt-dev -y
+        pip install parsedmarc
         parsedmarc --debug -c ci.ini samples/aggregate/*
         parsedmarc --debug -c ci.ini samples/forensic/*"
     - name: Test building packages
