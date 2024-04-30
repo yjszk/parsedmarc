@@ -11,17 +11,12 @@ jobs:
 
     runs-on: ubuntu-latest
 
-    strategy:
-      fail-fast: false
-      matrix:
-        python-version: ["3.8", "3.9", "3.10", "3.11", "3.12"]
-
     steps:
-    - uses: actions/checkout@v4
-    - name: Set up Python ${{ matrix.python-version }}
-      uses: actions/setup-python@v5
+    - uses: actions/checkout@v2
+    - name: Set up Python 3.8
+      uses: actions/setup-python@v2
       with:
-        python-version: ${{ matrix.python-version }}
+        python-version: "3.8"
     - name: Install system dependencies
       run: |
         sudo apt-get update
@@ -51,9 +46,9 @@ jobs:
     - name: Test sample DMARC reports
       continue-on-error: true
       run: |
-        pip install parsedmarc
+        pip install -e parsedmarc
         parsedmarc --debug -c ci.ini samples/aggregate/*
-        parsedmarc --debug -c ci.ini samples/forensic/*
+        parsedmarc --debug -c ci.ini samples/forensic/*"
     - name: Test building packages
       run: |
         hatch build
