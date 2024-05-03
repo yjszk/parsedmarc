@@ -51,7 +51,6 @@ jobs:
         coverage run tests.py
         coverage json
     - name: Test sample DMARC reports
-      continue-on-error: true
       run: |
         pip install -e .
         parsedmarc --debug -c ci.ini samples/aggregate/*
